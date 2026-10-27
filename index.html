@@ -110,28 +110,49 @@
   <div class="nav"><button id="prev">← 前</button><button id="next">次 →</button></div>
 </aside>
 
-<script src="data_kami.js"></script>
 <script src="figs.js"></script>
+<script src="zai_kami.js"></script>
+<script src="zai_danboru.js"></script>
+<script src="zai_kitake.js"></script>
+<script src="zai_nuno.js"></script>
+<script src="zai_pura.js"></script>
+<script src="zai_nendo.js"></script>
+<script src="zai_kinzoku.js"></script>
+<script src="zai_youki.js"></script>
 <script>
-const D = window.KAMI;
 // 岡本太郎風の原色パレット（v1と同じ）
 const COLORS = ["#e60012","#ffd400","#0068b7","#00a04a","#f39800","#e4007f","#1a1a1a","#00a0e9","#7d3c98","#8fc31f","#c1272d","#f6c3d0"];
-const MATS = ["紙","段ボール","木・竹","布・糸・ひも","プラ・樹脂","粘土・パテ・接着剤","金属・ワイヤー","容器・廃材"];
+const MATS = [["kami","紙"],["danboru","段ボール"],["kitake","木・竹"],["nuno","布・糸・ひも"],["pura","プラ・樹脂"],["nendo","粘土・パテ・接着剤"],["kinzoku","金属・ワイヤー"],["youki","容器・廃材"]];
 const LV = ["", "かんたん", "ふつう", "じっくり"];
+const ZAI = window.ZAI || [];
+let D = ZAI[0];
 
 // 背景色の明るさから文字色（白／黒）を決める
 const textOn = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = n >> 8 & 255, b = n & 255;
   return (0.299*r + 0.587*g + 0.114*b) / 255 > 0.6 ? "#141414" : "#ffffff"; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]);
-D.verbs.forEach((v, i) => { v.c = COLORS[i % COLORS.length]; v.t = textOn(v.c); });
+ZAI.forEach(z => z.verbs.forEach((v, i) => { v.c = COLORS[i % COLORS.length]; v.t = textOn(v.c); }));
 const verbOf = it => D.verbs.find(v => v.id === it.v);
 // 動詞のアクセント色が黒のときは、図の色面が黒くつぶれるので灰色に逃がす
 const accent = v => v.c === "#1a1a1a" ? "#9a9a9a" : v.c;
 
 let onVerb = null, query = "", shown = [];
 
-document.getElementById("mats").innerHTML = MATS.map(m => m === D.material
-  ? `<button class="on" aria-current="true">${m}</button>` : `<button disabled title="準備中">${m}</button>`).join("");
+function renderMats() {
+  const mats = document.getElementById("mats");
+  mats.innerHTML = MATS.map(([k, name]) => { const z = ZAI.find(z => z.key === k);
+    return !z ? `<button disabled title="準備中">${name}</button>`
+      : `<button data-k="${k}"${z === D ? ` class="on" aria-current="true"` : ""}>${name}</button>`; }).join("");
+  mats.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => setMat(b.dataset.k));
+}
+function setMat(k, keepHash) {
+  D = ZAI.find(z => z.key === k) || ZAI[0];
+  onVerb = null; query = "";
+  closeCard();
+  if (!keepHash) history.replaceState(null, "", "#" + D.key);
+  renderMats(); renderBar(); renderMain();
+  window.scrollTo(0, 0);
+}
 
 function renderBar() {
   const bar = document.getElementById("bar");
@@ -191,11 +212,11 @@ function openCard(id) {
   pb.onclick = () => prev && openCard(prev.id); nb.onclick = () => next && openCard(next.id);
   card.classList.add("open"); card.setAttribute("aria-hidden", "false"); scrim.classList.add("on");
   document.getElementById("cardBody").scrollTop = 0;
-  history.replaceState(null, "", "#" + id);
+  history.replaceState(null, "", "#" + D.key + "/" + id);
 }
 function closeCard() {
   card.classList.remove("open"); card.setAttribute("aria-hidden", "true"); scrim.classList.remove("on");
-  if (cur) history.replaceState(null, "", location.pathname);
+  if (cur) history.replaceState(null, "", "#" + D.key);
   cur = null;
 }
 document.getElementById("close").onclick = closeCard;
@@ -206,10 +227,10 @@ document.addEventListener("keydown", e => {
   if (cur && e.key === "ArrowLeft") document.getElementById("prev").click();
 });
 
-renderBar(); renderMain();
-// URLの #技法ID から直接カードを開ける
-const start = location.hash.slice(1);
-if (D.items.some(i => i.id === start)) openCard(start);
+// URLの #素材/技法ID から、その素材とカードを直接開ける
+const [startMat, startId] = decodeURIComponent(location.hash.slice(1)).split("/");
+setMat(startMat, true);
+if (startId && D.items.some(i => i.id === startId)) openCard(startId);
 </script>
 </body>
 </html>

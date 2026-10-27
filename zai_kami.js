@@ -1,9 +1,7 @@
 // 紙の技法（v2試作）。出典は必須にせず、一般的な工作の知識で書く。参考リンクは任意。
 // lv: 1=かんたん 2=ふつう 3=じっくり ／ fig: figs.js の図解キー
-const WP = t => ({ name:"Wikipedia「" + t + "」", url:"https://ja.wikipedia.org/wiki/" + encodeURIComponent(t) });
-
-window.KAMI = {
-  material: "紙",
+(window.ZAI = window.ZAI || []).push({
+  key: "kami", material: "紙",
   verbs: [
     { id:"oru",    name:"折る",   sub:"山折り・谷折り・筋つけ" },
     { id:"mageru", name:"曲げる", sub:"丸める・反らす・揉む" },
@@ -332,4 +330,4 @@ window.KAMI = {
       care:["火であぶると紙が燃えるので、アイロンを使う","アイロンは大人と一緒に使う"],
       links:[WP("あぶり出し")], fig:"aburidashi" }
   ]
-};
+});

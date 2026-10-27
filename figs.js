@@ -1,3 +1,6 @@
+// 参考リンク：Wikipedia日本語版
+window.WP = t => ({ name:"Wikipedia「" + t + "」", url:"https://ja.wikipedia.org/wiki/" + encodeURIComponent(t) });
+
 // 図解（すべて viewBox 0 0 160 100）。--a はその技法の動詞の色。紙＝白、手を入れる所＝色。
 (() => {
 const K = "#141414";
@@ -181,5 +184,7 @@ const F = {
     <path d="M100 30q3-4 0-8M144 30q3-4 0-8" fill="none" stroke="var(--a)" stroke-width="2.5" stroke-linecap="round"/>`
 };
 
+// 素材ごとのファイルから部品を使い、図を足せるようにする
+window.FIG = { K, S, W, C, N, T, DASH, AR, range, f, poly, strip, spiral, star, fuzzy, hex, cube, leaf, fish, add: o => Object.assign(F, o) };
 window.FIGS = key => F[key] ? `<svg viewBox="0 0 160 100" aria-hidden="true">${F[key]}</svg>` : "";
 })();
