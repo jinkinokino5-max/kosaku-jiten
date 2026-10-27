@@ -331,3 +331,99 @@
       links:[WP("あぶり出し")], fig:"aburidashi" }
   ]
 });
+
+// ── 追加分（2026-10-28〜）。図は FIG.add で足し、技法は紙の items に足す。
+(() => {
+const { K, S, W, C, N, T, DASH, AR, range, f, poly, star, fuzzy, leaf } = FIG;
+// しぶき（散らばった点）
+const sprinkle = (x, y, w, h, n, r = 2.2) => range(n).map(i => `<circle cx="${f(x + (i * 37) % w)}" cy="${f(y + (i * 23 + i * i * 7) % h)}" r="${r}" fill="var(--a)"/>`).join("");
+// 手をつないだ人形
+const doll = (cx, y, st) => `<path d="M${cx - 9} ${y + 16}H${cx + 9}V${y + 22}H${cx + 4}L${cx + 6} ${y + 44}H${cx + 1}L${cx} ${y + 32}L${cx - 1} ${y + 44}H${cx - 6}L${cx - 4} ${y + 22}H${cx - 9}Z" ${st}/><circle cx="${cx}" cy="${y + 9}" r="6" ${st}/>`;
+const blot = `<path d="${fuzzy(111, 44, 10, 3.5, 18)}" ${C}/><path d="${fuzzy(115, 63, 6, 2.5, 12)}" ${C}/>`;
+
+FIG.add({
+  kami_spatter: `<rect x="8" y="42" width="60" height="48" ${W}/><path d="${leaf(38, 66, 13)}" fill="#e6e6e6" ${S}/>
+    <rect x="8" y="16" width="60" height="16" fill="none" stroke="${K}" stroke-width="2"/>${range(7).map(i => `<path d="M${16 + i * 8} 16v16" ${T}/>`).join("")}
+    <rect x="18" y="4" width="40" height="9" rx="3" ${C}/>${sprinkle(12, 35, 52, 6, 8, 1.6)}${AR}
+    <rect x="94" y="14" width="60" height="72" ${W}/>${sprinkle(97, 17, 54, 66, 46)}<path d="${leaf(124, 52, 17)}" fill="#fff"/>`,
+  kami_decalco: `<rect x="8" y="22" width="60" height="56" ${W}/><path d="M38 22v56" ${DASH}/><path d="${fuzzy(24, 44, 8, 2.5, 16)}" ${C}/><path d="${fuzzy(28, 63, 5, 2, 12)}" ${C}/>${AR}
+    <rect x="94" y="22" width="60" height="56" ${W}/><path d="M124 22v56" ${T}/>${blot}<g transform="matrix(-1 0 0 1 248 0)">${blot}</g>`,
+  kami_hajiki: `<rect x="8" y="18" width="60" height="64" ${W}/><path d="${star(38, 50, 22, 9)}" fill="none" stroke="#c8c8c8" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M56 72 66 42" stroke="${K}" stroke-width="10" stroke-linecap="round"/><path d="M56 72 66 42" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${AR}
+    <rect x="94" y="18" width="60" height="64" ${C}/><path d="${star(124, 50, 22, 9)}" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>`,
+  kami_fukie: `<rect x="8" y="10" width="144" height="80" ${W}/>
+    <path d="M70 80C68 64 62 54 50 40M66 62C76 52 84 46 90 32M58 50C48 44 40 44 30 36M84 46C92 44 98 40 104 30M50 40l-4-12M52 42l10-10" fill="none" stroke="var(--a)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="70" cy="80" r="6" ${C}/>
+    <path d="M140 84 104 64" stroke="${K}" stroke-width="9" stroke-linecap="round"/><path d="M140 84 104 64" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    <path d="M96 62l-8-4M96 70h-9M98 54l-6-6" ${T}/>`,
+  kami_itohiki: `<rect x="8" y="16" width="60" height="64" ${W}/><path d="M38 16v64" ${DASH}/>
+    <path d="M34 26C18 32 32 44 20 52C12 58 28 66 26 94" fill="none" stroke="var(--a)" stroke-width="3.5" stroke-linecap="round"/>${AR}
+    <rect x="94" y="16" width="60" height="64" ${W}/><path d="M124 16v64" ${T}/>
+    ${[1, -1].map(s => range(5).map(k => `<path d="M124 ${76 - k * 11}q${s * (8 + k * 3)} -2 ${s * (18 + k)} -16" fill="none" stroke="var(--a)" stroke-width="3" stroke-linecap="round"/>`).join("")).join("")}`,
+  kami_tsunagari: `${range(3).map(i => `<rect x="${28 + i * 3}" y="${20 + i * 3}" width="18" height="58" ${W}/>`).join("")}${doll(43, 30, DASH)}${AR}
+    ${range(4).map(i => doll(97 + i * 17, 26, C)).join("")}`,
+  kami_heli: `<rect x="20" y="8" width="30" height="84" ${W}/><path d="M35 8v38" stroke="var(--a)" stroke-width="3.5"/><path d="M20 46h30" ${DASH}/>
+    <path d="M20 60h8M50 60h-8" stroke="var(--a)" stroke-width="3.5"/><path d="M28 60v32M42 60v32" ${DASH}/>${AR}
+    <path d="M123 44 96 30 98 22 123 38Z" ${C}/><path d="M123 44 150 30 148 22 123 38Z" ${W}/><rect x="118" y="42" width="10" height="40" ${W}/><rect x="116" y="76" width="14" height="10" rx="3" fill="#b9c0c8" ${S}/>
+    <path d="M104 12a20 5 0 0 0 38 0" ${N}/><path d="M142 12l-6-3m6 3-3 6" ${N}/>`,
+  kami_collage: `<rect x="16" y="8" width="128" height="84" ${W}/>
+    <rect x="26" y="18" width="48" height="36" transform="rotate(-8 50 36)" ${C}/><circle cx="50" cy="36" r="9" fill="#fff" ${S}/>
+    <path d="${fuzzy(104, 38, 22, 3, 30)}" fill="#ffe08a" ${S}/>
+    <g transform="rotate(6 99 69)"><rect x="70" y="56" width="58" height="26" ${W}/>${range(3).map(i => `<path d="M78 ${63 + i * 7}h${40 - i * 8}" ${T}/>`).join("")}</g>
+    <path d="M28 84 42 60 56 84Z" ${C}/>`
+});
+
+window.ZAI.find(z => z.key === "kami").items.push(
+  { id:"spatter", v:"someru", lv:1, name:"網と歯ブラシでしぶきを散らす（スパッタリング）",
+    one:"絵の具をつけた歯ブラシで網をこすり、細かいしぶきを散らす。型紙を置いた所だけが白く抜ける。",
+    need:["画用紙","水彩かポスターカラー（やや濃いめ）","古い歯ブラシ","目の細かい金網（茶こしでもよい）","型紙（葉っぱ、切り抜いた紙）"],
+    steps:["画用紙の上に、葉っぱや切り抜いた型紙を置く","歯ブラシに絵の具を少しつける","紙から10〜15cmほど上で網を持ち、歯ブラシでこする","しぶきが十分にかかったら、乾く前にそっと型紙を外す"],
+    tips:["絵の具が水っぽいと大きな粒になって垂れる。少し濃いめにすると細かい霧になる","色を変えて2回散らすと、奥行きのあるグラデーションになる"],
+    fun:"葉っぱのシルエット画、星空、年賀状、ブックカバー。",
+    care:["しぶきが広く飛ぶので、新聞紙を大きく敷き、汚れてもよい服で"], fig:"kami_spatter" },
+  { id:"decalco", v:"someru", lv:1, name:"二つ折りで写し合う（デカルコマニー）",
+    one:"紙の片側に絵の具をのせ、二つ折りにして押さえてから開く。左右対称の、思いがけない模様が出る。",
+    need:["画用紙","絵の具（チューブから出したままの濃さ）"],
+    steps:["紙を半分に折って折り目をつけ、開く","片側だけに、絵の具を点や線で置く","閉じて、手のひらで上からなでるように押さえる","ゆっくり開く"],
+    tips:["絵の具は水で薄めない。濃いほど、枝分かれした模様が出やすい","できた形を見て、ペンで目や足を描き足すと、虫や生き物になる"],
+    fun:"ちょうちょ、ふしぎな生き物、カードの表紙、背景の模様。", fig:"kami_decalco" },
+  { id:"hajiki", v:"someru", lv:1, name:"クレヨンで描いて絵の具をはじく（はじき絵）",
+    one:"クレヨンやろうそくで描いた上から、水っぽい絵の具を塗る。油分が水をはじいて、描いた線が浮かび上がる。",
+    need:["画用紙","クレヨン（白も）かろうそく","水彩絵の具（水多め）","太めの筆"],
+    steps:["クレヨンで、強めに絵を描く","水を多めにした絵の具を、上から一気に塗る","乾かす"],
+    tips:["白いクレヨンやろうそくで描くと、塗るまで見えない「秘密の絵」になる","絵の具が濃いと、クレヨンの上にも色が乗ってしまう。水っぽいほどよくはじく"],
+    fun:"夜空と花火、海の中、秘密のメッセージカード。", fig:"kami_hajiki" },
+  { id:"fukie", v:"someru", lv:1, name:"ストローで吹いて広げる（吹き絵）",
+    one:"紙に落とした絵の具のしずくを、ストローで吹いて走らせる。枝分かれした線が、木や稲妻のように伸びる。",
+    need:["画用紙（表面がつるつるした紙だとよく走る）","水で溶いた絵の具","スポイトか筆","ストロー"],
+    steps:["絵の具を、さらっと流れるくらいに水で溶く","紙にしずくを1滴落とす","ストローを紙に近づけ、しずくの横から強く吹く","向きを変えながら吹くと、枝分かれしていく"],
+    tips:["紙と平行に近い向きで吹くほど、遠くまで走る","乾いてから、枝先に指スタンプで花や実を足すと絵になる"],
+    fun:"木、花火、稲妻、髪の毛、おばけ。",
+    care:["吹きすぎて頭がくらくらしたら休む","ストローで絵の具を吸わない"], fig:"kami_fukie" },
+  { id:"itohiki", v:"someru", lv:2, name:"絵の具をつけた糸を引き抜く（糸引き絵）",
+    one:"絵の具にひたした糸を二つ折りの紙にはさみ、押さえながら引き抜く。羽根や炎のような、左右対称の線が出る。",
+    need:["画用紙","たこ糸や毛糸（30cmくらい）","絵の具（少し水で溶く）","皿"],
+    steps:["紙を二つ折りにして開く","糸を絵の具にひたし、片側にくねらせて置く。端は紙の外に出しておく","紙を閉じ、上から本や手で軽く押さえる","押さえたまま糸の端を引いて抜き、紙を開く"],
+    tips:["引く向きや速さを変えると、模様が変わる","色の違う糸を2本入れて同時に引くと、色が混ざり合う"],
+    fun:"羽根、炎、花、カードの表紙、包装紙。", fig:"kami_itohiki" },
+  { id:"tsunagari", v:"kiru", lv:1, name:"蛇腹に折って切る、つながり人形",
+    one:"紙を蛇腹に折り、人の形を切る。手の先を折り山まで残すと、開いたとき手をつないだ列になる。",
+    need:["細長い紙（コピー用紙を半分に切るなど）","はさみ","鉛筆"],
+    steps:["紙を、同じ幅で蛇腹に折りたたむ","いちばん上に人の形を描く。手を左右の折り山まで届かせる","重ねたまま切り抜く（手の先の折り山は切らない）","そっと開く"],
+    tips:["折る回数が多いほど厚くて切りにくい。最初は4〜6人分くらいで","人だけでなく、星、家、動物でもできる"],
+    fun:"壁飾り、応援の旗、クリスマスの飾り、お話の登場人物。", fig:"kami_tsunagari" },
+  { id:"heli", v:"kiru", lv:1, name:"くるくる落ちる紙のヘリコプター",
+    one:"細長い紙の上を2つに裂いて左右に折り、下をクリップで重くする。落とすと羽が回って、ゆっくり降りる。",
+    need:["コピー用紙など薄い紙（3cm×12cmくらい）","はさみ","ゼムクリップ"],
+    steps:["紙の上から半分のところまで、まん中に切り込みを入れる（羽になる）","下半分の左右に短い切り込みを入れ、内側に折って細い胴にする","胴の先をクリップで留める","羽を1枚は手前に、1枚は奥に折り、高い所から落とす"],
+    tips:["羽を逆向きに折ると、回る向きも逆になる","羽を長くするとゆっくり落ち、クリップを増やすと速く落ちる"],
+    fun:"落ちる速さの競争、カエデのたねが飛ぶしくみの観察。",
+    care:["高い所から落とすときは、足場に気をつける"], fig:"kami_heli" },
+  { id:"collage", v:"haru", lv:1, name:"切り抜きを集めて貼る（コラージュ）",
+    one:"雑誌やチラシ、包み紙などを切ったりちぎったりして、組み合わせて貼る。関係ないもの同士が、新しい絵になる。",
+    need:["台紙","雑誌・チラシ・包装紙・写真など","はさみ","のり"],
+    steps:["気になる色や形、写真を、どんどん切り抜いて集める","台紙の上で並べ替えて、組み合わせを探す（まだ貼らない）","決まったら、奥にくるものから順に貼る"],
+    tips:["写真の一部（目、手、建物）を入れ替えると、ふしぎな絵になる","はさみの切り口と、ちぎった縁を混ぜると表情が出る"],
+    fun:"ポスター、カード、夢の街、好きなものマップ。", fig:"kami_collage" }
+);
+})();
