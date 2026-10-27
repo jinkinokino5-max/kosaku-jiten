@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作の方法辞典</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#fff8e7; --ink:#141414; --paper:#ffffff; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; }
+  body { background:var(--bg); color:var(--ink); font-family:"Zen Maru Gothic", sans-serif; font-weight:500; font-size:17px; line-height:1.75; }
+  button, input { font:inherit; color:inherit; }
+
+  /* ヘッダー：サイト名と素材タブ */
+  header { background:var(--ink); color:#fff; }
+  .hd { max-width:1240px; margin:0 auto; padding:10px 16px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 18px; }
+  .site { font-weight:900; font-size:22px; letter-spacing:.05em; }
+  .mats { display:flex; flex-wrap:wrap; gap:6px; }
+  .mats button { border:2px solid #fff; background:none; border-radius:999px; padding:0 12px; font-weight:700; font-size:15px; cursor:pointer; }
+  .mats button.on { background:#fff; color:var(--ink); }
+  .mats button:disabled { opacity:.4; cursor:default; border-style:dashed; }
+
+  /* 動詞の絞り込みと検索（上に貼りつく） */
+  .bar { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:4px solid var(--ink); }
+  .bar-in { max-width:1240px; margin:0 auto; padding:10px 16px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; min-width:0; flex:1 1 auto; }
+  .chip { border:3px solid var(--ink); background:var(--c, #fff); color:var(--t, var(--ink)); font-weight:900; font-size:16px; padding:2px 12px; cursor:pointer; line-height:1.5; }
+  .chip small { font-weight:700; font-size:12px; margin-left:4px; opacity:.85; }
+  .chip.off { background:#fff; color:var(--ink); opacity:.45; }
+  .search { margin-left:auto; border:3px solid var(--ink); background:#fff; padding:2px 10px; width:min(240px, 100%); font-weight:700; }
+  .count { font-weight:700; font-size:14px; }
+
+  main { max-width:1240px; margin:0 auto; padding:20px 16px 80px; }
+  .lead { font-weight:900; font-size:clamp(26px,5vw,40px); line-height:1.25; margin:4px 0 4px; }
+  .lead-sub { font-weight:700; margin:0 0 18px; }
+
+  /* 動詞ごとの段 */
+  section.verb { margin:0 0 34px; scroll-margin-top:80px; }
+  .band { display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 14px; background:var(--c); color:var(--t); border:4px solid var(--ink);
+    padding:6px 16px; margin-bottom:14px; box-shadow:6px 6px 0 var(--ink); }
+  .band .v { font-weight:900; font-size:clamp(30px,5vw,44px); line-height:1.2; }
+  .band .s { font-weight:700; font-size:15px; }
+
+  /* 技法のタイル：図・名前・一言が一目で見える */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px; }
+  .tile { display:flex; flex-direction:column; text-align:left; background:var(--paper); border:3px solid var(--ink); padding:0; cursor:pointer;
+    box-shadow:4px 4px 0 var(--ink); transition:transform .12s, box-shadow .12s; }
+  .tile:hover, .tile:focus-visible { transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--ink); outline:none; }
+  .tile .fig { background:color-mix(in srgb, var(--a) 16%, #fff); border-bottom:3px solid var(--ink); padding:6px 10px; }
+  .tile .fig svg, .card .fig svg { display:block; width:100%; height:auto; }
+  .tile .tx { padding:8px 12px 12px; }
+  .tile .nm { display:block; font-weight:900; font-size:18px; line-height:1.4; }
+  .tile .one { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-size:14px; line-height:1.55; margin-top:4px; }
+  .lv { display:inline-block; font-weight:700; font-size:12px; border:2px solid var(--ink); border-radius:999px; padding:0 8px; margin-top:6px; line-height:1.6; }
+  .empty { font-weight:700; padding:40px 0; }
+
+  footer { max-width:1240px; margin:0 auto; padding:0 16px 40px; font-size:14px; }
+
+  /* カード（横からスライド） */
+  .card { position:fixed; z-index:10; right:0; top:0; height:100%; width:min(520px,100%); background:var(--paper); border-left:4px solid var(--ink);
+    transform:translateX(105%); transition:transform .35s cubic-bezier(.2,.9,.3,1.05); display:flex; flex-direction:column; box-shadow:-10px 0 0 rgba(0,0,0,.12); }
+  .card.open { transform:none; }
+  .card .top { background:var(--c); color:var(--t); padding:10px 56px 10px 20px; border-bottom:4px solid var(--ink); font-weight:900; font-size:22px; }
+  .card .top small { font-weight:700; font-size:14px; margin-left:8px; }
+  .card .body { overflow:auto; padding:16px 20px 24px; flex:1; }
+  .card .fig { background:color-mix(in srgb, var(--a) 16%, #fff); border:3px solid var(--ink); padding:10px 18px; margin-bottom:14px; }
+  .card h2 { font-weight:900; font-size:26px; line-height:1.35; margin:0; }
+  .card .one { font-weight:700; font-size:18px; margin:8px 0 16px; }
+  .row { margin:0 0 14px; }
+  .row .lb { display:inline-block; background:var(--ink); color:#fff; font-weight:700; font-size:14px; padding:0 8px; margin-bottom:4px; }
+  .row p { margin:0; }
+  .row ul, .row ol { margin:4px 0 0; padding-left:1.5em; } .row li { margin:0 0 4px; }
+  .row.fun { background:color-mix(in srgb, var(--a) 14%, #fff); border:2px solid var(--ink); padding:8px 12px; }
+  .row.warn .lb { background:#c0392b; } .row.warn { border-left:4px solid #c0392b; padding-left:10px; }
+  .row.links a { color:inherit; font-weight:700; }
+  .nav { display:flex; justify-content:space-between; gap:8px; border-top:3px solid var(--ink); padding:10px 16px; }
+  .nav button { border:3px solid var(--ink); background:#fff; font-weight:900; padding:4px 12px; cursor:pointer; max-width:48%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .nav button:disabled { opacity:.3; cursor:default; }
+  .close { position:absolute; right:10px; top:8px; width:40px; height:40px; border:3px solid var(--ink); background:var(--paper); color:var(--ink);
+    font-size:24px; line-height:1; cursor:pointer; font-weight:900; }
+  .scrim { position:fixed; inset:0; z-index:9; background:rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .3s; }
+  .scrim.on { opacity:1; pointer-events:auto; }
+
+  @media (max-width:600px) {
+    body { font-size:16px; }
+    .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .tile .nm { font-size:15px; } .tile .one { font-size:13px; }
+    .chips, .mats { flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; max-width:100%; }
+    .mats button { white-space:nowrap; flex:none; }
+    .chip { font-size:14px; padding:1px 8px; white-space:nowrap; flex:none; }
+    .search { margin-left:0; width:100%; }
+    .card { top:auto; bottom:0; height:86%; width:100%; border-left:none; border-top:4px solid var(--ink); transform:translateY(105%); }
+  }
+  @media (prefers-reduced-motion:reduce) { .card, .tile { transition:none; } }
+</style>
+</head>
+<body>
+<header><div class="hd"><span class="site">工作の方法辞典</span><nav class="mats" id="mats" aria-label="素材"></nav></div></header>
+<div class="bar"><div class="bar-in" id="bar"></div></div>
+<main id="main"></main>
+<footer>技法の内容は、一般的な工作の知識をもとに書いています。参考リンクは、もっと知りたい人向けの入口です。</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="card" id="card" aria-hidden="true">
+  <button class="close" id="close" aria-label="閉じる">×</button>
+  <div class="top" id="cardTop"></div>
+  <div class="body" id="cardBody"></div>
+  <div class="nav"><button id="prev">← 前</button><button id="next">次 →</button></div>
+</aside>
+
+<script src="data_kami.js"></script>
+<script src="figs.js"></script>
+<script>
+const D = window.KAMI;
+// 岡本太郎風の原色パレット（v1と同じ）
+const COLORS = ["#e60012","#ffd400","#0068b7","#00a04a","#f39800","#e4007f","#1a1a1a","#00a0e9","#7d3c98","#8fc31f","#c1272d","#f6c3d0"];
+const MATS = ["紙","段ボール","木・竹","布・糸・ひも","プラ・樹脂","粘土・パテ・接着剤","金属・ワイヤー","容器・廃材"];
+const LV = ["", "かんたん", "ふつう", "じっくり"];
+
+// 背景色の明るさから文字色（白／黒）を決める
+const textOn = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = n >> 8 & 255, b = n & 255;
+  return (0.299*r + 0.587*g + 0.114*b) / 255 > 0.6 ? "#141414" : "#ffffff"; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[c]);
+D.verbs.forEach((v, i) => { v.c = COLORS[i % COLORS.length]; v.t = textOn(v.c); });
+const verbOf = it => D.verbs.find(v => v.id === it.v);
+// 動詞のアクセント色が黒のときは、図の色面が黒くつぶれるので灰色に逃がす
+const accent = v => v.c === "#1a1a1a" ? "#9a9a9a" : v.c;
+
+let onVerb = null, query = "", shown = [];
+
+document.getElementById("mats").innerHTML = MATS.map(m => m === D.material
+  ? `<button class="on" aria-current="true">${m}</button>` : `<button disabled title="準備中">${m}</button>`).join("");
+
+function renderBar() {
+  const bar = document.getElementById("bar");
+  bar.innerHTML = `<div class="chips"><button class="chip${onVerb ? " off" : ""}" data-v="">すべて<small>${D.items.length}</small></button>` +
+    D.verbs.map(v => `<button class="chip${onVerb && onVerb !== v.id ? " off" : ""}" data-v="${v.id}" style="--c:${v.c};--t:${v.t}">${esc(v.name)}<small>${D.items.filter(i => i.v === v.id).length}</small></button>`).join("") +
+    `</div><input class="search" id="q" type="search" placeholder="さがす（例：のり、光、本）" value="${esc(query)}" aria-label="技法をさがす">`;
+  bar.querySelectorAll(".chip").forEach(b => b.onclick = () => { onVerb = b.dataset.v === onVerb ? null : (b.dataset.v || null); renderBar(); renderMain(); });
+  const q = document.getElementById("q");
+  q.oninput = () => { query = q.value.trim(); renderMain(); };
+}
+
+const hit = it => !query || [it.name, it.one, it.fun, ...(it.need || [])].join(" ").includes(query);
+
+function renderMain() {
+  const main = document.getElementById("main");
+  const vs = D.verbs.filter(v => !onVerb || v.id === onVerb);
+  shown = [];
+  const html = vs.map(v => {
+    const its = D.items.filter(i => i.v === v.id && hit(i));
+    if (!its.length) return "";
+    shown.push(...its);
+    return `<section class="verb" style="--c:${v.c};--t:${v.t};--a:${accent(v)}">
+      <div class="band"><span class="v">${esc(v.name)}</span><span class="s">${esc(v.sub)}・${its.length}の技法</span></div>
+      <div class="tiles">${its.map(it => `<button class="tile" data-id="${it.id}">
+        <span class="fig">${FIGS(it.fig)}</span>
+        <span class="tx"><span class="nm">${esc(it.name)}</span><span class="one">${esc(it.one)}</span><span class="lv">${LV[it.lv]}</span></span>
+      </button>`).join("")}</div></section>`;
+  }).join("");
+  main.innerHTML = `<h1 class="lead">${esc(D.material)}で、なにができる？</h1>
+    <p class="lead-sub">${shown.length}の技法。気になる図を押すと、作り方が出ます。</p>` +
+    (html || `<p class="empty">「${esc(query)}」に合う技法は見つかりませんでした。</p>`);
+  main.querySelectorAll(".tile").forEach(t => t.onclick = () => openCard(t.dataset.id));
+}
+
+// カード
+const card = document.getElementById("card"), scrim = document.getElementById("scrim");
+const ul = a => a && a.length ? `<ul>${a.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+const sec = (label, inner, cls = "") => inner ? `<div class="row ${cls}"><span class="lb">${label}</span>${inner}</div>` : "";
+let cur = null;
+function openCard(id) {
+  const it = D.items.find(i => i.id === id), v = verbOf(it);
+  cur = id;
+  card.style.setProperty("--c", v.c); card.style.setProperty("--t", v.t); card.style.setProperty("--a", accent(v));
+  document.getElementById("cardTop").innerHTML = `${esc(v.name)}<small>${esc(D.material)} ・ ${LV[it.lv]}</small>`;
+  document.getElementById("cardBody").innerHTML = `<div class="fig">${FIGS(it.fig)}</div>
+    <h2>${esc(it.name)}</h2><p class="one">${esc(it.one)}</p>
+    ${sec("用意するもの", ul(it.need))}
+    ${sec("作り方", it.steps ? `<ol>${it.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : "")}
+    ${sec("コツ", ul(it.tips))}
+    ${sec("こんな作品に", it.fun ? `<p>${esc(it.fun)}</p>` : "", "fun")}
+    ${sec("気をつけること", ul(it.care), "warn")}
+    ${sec("もっと知りたい", it.links && it.links.length ? `<ul>${it.links.map(l => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.name)}</a></li>`).join("")}</ul>` : "", "links")}`;
+  const k = shown.findIndex(i => i.id === id), prev = shown[k - 1], next = shown[k + 1];
+  const pb = document.getElementById("prev"), nb = document.getElementById("next");
+  pb.disabled = !prev; pb.textContent = prev ? "← " + prev.name : "← 前";
+  nb.disabled = !next; nb.textContent = next ? next.name + " →" : "次 →";
+  pb.onclick = () => prev && openCard(prev.id); nb.onclick = () => next && openCard(next.id);
+  card.classList.add("open"); card.setAttribute("aria-hidden", "false"); scrim.classList.add("on");
+  document.getElementById("cardBody").scrollTop = 0;
+  history.replaceState(null, "", "#" + id);
+}
+function closeCard() {
+  card.classList.remove("open"); card.setAttribute("aria-hidden", "true"); scrim.classList.remove("on");
+  if (cur) history.replaceState(null, "", location.pathname);
+  cur = null;
+}
+document.getElementById("close").onclick = closeCard;
+scrim.onclick = closeCard;
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeCard();
+  if (cur && e.key === "ArrowRight") document.getElementById("next").click();
+  if (cur && e.key === "ArrowLeft") document.getElementById("prev").click();
+});
+
+renderBar(); renderMain();
+// URLの #技法ID から直接カードを開ける
+const start = location.hash.slice(1);
+if (D.items.some(i => i.id === start)) openCard(start);
+</script>
+</body>
+</html>
