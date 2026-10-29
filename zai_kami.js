@@ -600,7 +600,7 @@ window.ZAI.find(z => z.key === "kami").items.push(
 );
 // ── 追加分4
 FIG.add({
-  kami_me: `<rect x="10" y="20" width="56" height="60" ${W}/><path d="M24 26V74M38 26V74M52 26V74" ${T}/><path d="M72 50H4" ${AR}/>
+  kami_me: `<rect x="10" y="20" width="56" height="60" ${W}/><path d="M24 26V74M38 26V74M52 26V74" ${T}/>${AR}
     <rect x="94" y="20" width="56" height="60" ${W}/><path d="M100 34H144M100 48H144M100 62H144" ${T}/><path d="M122 12V6m0 0-4 4m4-4 4 4" ${C}/>`,
   kami_carbon: `<rect x="12" y="14" width="56" height="70" ${W}/><path d="M24 70L40 26 56 70" ${N}/>
     <rect x="94" y="14" width="56" height="34" ${C}/><rect x="94" y="52" width="56" height="34" ${W}/><path d="M104 78L122 58 140 78" ${N}/>${AR}`,
